@@ -1,5 +1,7 @@
-package cl.duoc.consumiendoapi.data
+package cl.duoc.consumiendoapi.data.remote
 
+import cl.duoc.consumiendoapi.data.model.ClienteRequest
+import cl.duoc.consumiendoapi.domain.model.Cliente
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

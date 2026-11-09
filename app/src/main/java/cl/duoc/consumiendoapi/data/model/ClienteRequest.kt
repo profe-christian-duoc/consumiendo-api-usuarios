@@ -1,7 +1,6 @@
-package cl.duoc.consumiendoapi.data
+package cl.duoc.consumiendoapi.data.model
 
-data class Cliente(
-    val id: Int,
+data class ClienteRequest(
     val nombre: String,
     val apellido: String,
     val edad: Int,

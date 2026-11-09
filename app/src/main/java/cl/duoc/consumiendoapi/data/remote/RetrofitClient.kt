@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.data
+package cl.duoc.consumiendoapi.data.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

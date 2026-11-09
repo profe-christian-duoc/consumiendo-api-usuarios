@@ -1,28 +1,15 @@
-package cl.duoc.consumiendoapi.ui
+package cl.duoc.consumiendoapi.presentation.clientes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cl.duoc.consumiendoapi.data.Cliente
-import cl.duoc.consumiendoapi.data.ClientesRepository
+import cl.duoc.consumiendoapi.domain.usecase.ObtenerClientesUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-sealed interface ClientesUiState {
-    data object Cargando : ClientesUiState
-
-    data class Exito(
-        val clientes: List<Cliente>
-    ) : ClientesUiState
-
-    data class Error(
-        val mensaje: String
-    ) : ClientesUiState
-}
-
 class ClientesViewModel(
-    private val repository: ClientesRepository = ClientesRepository()
+    private val obtenerClientesUseCase: ObtenerClientesUseCase = ObtenerClientesUseCase()
 ) : ViewModel() {
 
     private val _uiState =
@@ -39,7 +26,7 @@ class ClientesViewModel(
             _uiState.value = ClientesUiState.Cargando
 
             try {
-                val clientes = repository.obtenerClientes()
+                val clientes = obtenerClientesUseCase()
                 _uiState.value = ClientesUiState.Exito(clientes)
 
             } catch (e: CancellationException) {

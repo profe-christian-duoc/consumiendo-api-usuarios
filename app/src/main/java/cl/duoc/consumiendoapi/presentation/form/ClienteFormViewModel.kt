@@ -1,28 +1,18 @@
-
-package cl.duoc.consumiendoapi.ui
+package cl.duoc.consumiendoapi.presentation.form
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cl.duoc.consumiendoapi.data.ClienteRequest
-import cl.duoc.consumiendoapi.data.ClientesRepository
+import cl.duoc.consumiendoapi.data.model.ClienteRequest
+import cl.duoc.consumiendoapi.domain.usecase.GuardarClienteUseCase
+import cl.duoc.consumiendoapi.domain.usecase.ObtenerClienteUseCase
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-data class ClienteFormState(
-    val nombre: String = "",
-    val apellido: String = "",
-    val edad: String = "",
-    val tipo: String = "regular",
-    val cargando: Boolean = false,
-    val guardando: Boolean = false,
-    val guardado: Boolean = false,
-    val error: String? = null
-)
-
 class ClienteFormViewModel(
-    private val repository: ClientesRepository = ClientesRepository()
+    private val obtenerClienteUseCase: ObtenerClienteUseCase = ObtenerClienteUseCase(),
+    private val guardarClienteUseCase: GuardarClienteUseCase = GuardarClienteUseCase()
 ) : ViewModel() {
 
     private var clienteCargadoId: Int? = null
@@ -73,7 +63,7 @@ class ClienteFormViewModel(
             )
 
             try {
-                val cliente = repository.obtenerCliente(id)
+                val cliente = obtenerClienteUseCase(id)
 
                 _estado.value = ClienteFormState(
                     nombre = cliente.nombre,
@@ -102,19 +92,13 @@ class ClienteFormViewModel(
         if (actual.guardando || actual.cargando ||
             actual.guardado) return
 
-        val nombre = actual.nombre.trim()
-        val apellido = actual.apellido.trim()
-        val edad = actual.edad.toIntOrNull()
-
-        val errorValidacion = when {
-            nombre.isBlank() -> "Ingresa un nombre."
-            apellido.isBlank() -> "Ingresa un apellido."
-            edad == null || edad !in 1..120 ->
-                "La edad debe estar entre 1 y 120."
-            actual.tipo !in listOf("regular", "vip") ->
-                "Selecciona un tipo válido."
-            else -> null
-        }
+        val edadInt = actual.edad.toIntOrNull()
+        val errorValidacion = ClienteValidator.validar(
+            nombre = actual.nombre,
+            apellido = actual.apellido,
+            edad = edadInt,
+            tipo = actual.tipo
+        )
 
         if (errorValidacion != null) {
             _estado.value = actual.copy(error = errorValidacion)
@@ -122,9 +106,9 @@ class ClienteFormViewModel(
         }
 
         val solicitud = ClienteRequest(
-            nombre = nombre,
-            apellido = apellido,
-            edad = edad!!,
+            nombre = actual.nombre.trim(),
+            apellido = actual.apellido.trim(),
+            edad = edadInt!!,
             tipo = actual.tipo
         )
 
@@ -136,9 +120,9 @@ class ClienteFormViewModel(
 
             try {
                 if (id == null) {
-                    repository.crearCliente(solicitud)
+                    guardarClienteUseCase.crear(solicitud)
                 } else {
-                    repository.actualizarCliente(id, solicitud)
+                    guardarClienteUseCase.actualizar(id, solicitud)
                 }
 
                 _estado.value = _estado.value.copy(

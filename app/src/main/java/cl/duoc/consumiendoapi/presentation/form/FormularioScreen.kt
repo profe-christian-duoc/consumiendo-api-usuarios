@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.ui
+package cl.duoc.consumiendoapi.presentation.form
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

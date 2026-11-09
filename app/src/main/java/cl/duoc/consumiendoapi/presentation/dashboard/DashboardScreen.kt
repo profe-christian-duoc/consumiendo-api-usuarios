@@ -1,10 +1,8 @@
-package cl.duoc.consumiendoapi.ui
+package cl.duoc.consumiendoapi.presentation.dashboard
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +11,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cl.duoc.consumiendoapi.domain.usecase.CalcularEstadisticasUseCase
+import cl.duoc.consumiendoapi.presentation.clientes.ClientesUiState
+import cl.duoc.consumiendoapi.presentation.clientes.ClientesViewModel
+import cl.duoc.consumiendoapi.presentation.components.TarjetaEstadistica
 import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
 import androidx.lifecycle.Lifecycle
@@ -22,7 +24,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 fun DashboardScreen(
     onAgregarUsuario: () -> Unit,
     onRevisarUsuarios: () -> Unit,
-    viewModel: ClientesViewModel = viewModel()
+    viewModel: ClientesViewModel = viewModel(),
+    calcularEstadisticasUseCase: CalcularEstadisticasUseCase = CalcularEstadisticasUseCase()
 ) {
 
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,7 +72,7 @@ fun DashboardScreen(
 
             is ClientesUiState.Exito -> {
 
-                val datos = calcularEstadisticas(actual.clientes)
+                val datos = calcularEstadisticasUseCase(actual.clientes)
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -131,44 +134,6 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Revisar usuarios")
-        }
-    }
-}
-
-@Composable
-private fun TarjetaEstadistica(
-    titulo: String,
-    valor: String,
-    colorBorde: androidx.compose.ui.graphics.Color
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(125.dp),
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(2.dp, colorBorde),
-        colors = CardDefaults.cardColors(
-            containerColor = Superficie
-        )
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(14.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = valor,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = TextoPrincipal
-            )
-
-            Text(
-                text = titulo,
-                style = MaterialTheme.typography.bodySmall,
-                color = AzulSecundario
-            )
         }
     }
 }
