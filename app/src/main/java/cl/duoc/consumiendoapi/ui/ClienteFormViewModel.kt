@@ -11,6 +11,7 @@ data class ClienteFormState(
     val apellido: String = "",
     val edad: String = "",
     val tipo: String = "regular",
+    
     val cargando: Boolean = false,
     val guardando: Boolean = false,
     val guardado: Boolean = false,

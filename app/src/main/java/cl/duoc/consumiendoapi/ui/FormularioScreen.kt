@@ -1,38 +1,127 @@
-
 package cl.duoc.consumiendoapi.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun FormularioScreen(
-    onVolver: () -> Unit
+    onVolver: () -> Unit,
+    viewModel: ClienteFormViewModel = viewModel()
 ) {
+    val estado by viewModel.estado.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        TextButton(onClick = onVolver) {
+            Text("← Volver")
+        }
+        if (estado.guardado) {
+            Text(
+                text = "¡Usuario creado correctamente!",
+                color = MaterialTheme.colorScheme.primary
+            )
 
-        Text(
-            text = "Formulario de usuario",
-            style = MaterialTheme.typography.headlineMedium
-        )
+            Button(
+                onClick = onVolver,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Continuar")
+            }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        } else if (estado.cargando) {
+            CircularProgressIndicator()
 
-        Text("Aquí construiremos el formulario de creación y edición.")
+        } else {
 
-        Spacer(modifier = Modifier.height(24.dp))
+            OutlinedTextField(
+                value = estado.nombre,
+                onValueChange = viewModel::cambiarNombre,
+                label = { Text("Nombre") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Button(onClick = onVolver) {
-            Text("Volver al inicio")
+            OutlinedTextField(
+                value = estado.apellido,
+                onValueChange = viewModel::cambiarApellido,
+                label = { Text("Apellido") },
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = estado.edad,
+                onValueChange = viewModel::cambiarEdad,
+                label = { Text("Edad") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                ),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Text(
+                text = "Tipo de cliente",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = estado.tipo == "regular",
+                    onClick = {
+                        viewModel.cambiarTipo("regular")
+                    },
+                    label = { Text("Regular") }
+                )
+
+                FilterChip(
+                    selected = estado.tipo == "vip",
+                    onClick = {
+                        viewModel.cambiarTipo("vip")
+                    },
+                    label = { Text("VIP") }
+                )
+            }
+
+            if (estado.error != null) {
+                Text(
+                    text = estado.error!!,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            Button(
+                onClick = { },
+                enabled = !estado.guardando,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (estado.guardando) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Text("Guardar usuario")
+                }
+            }
         }
     }
 }
