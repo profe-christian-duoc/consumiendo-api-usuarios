@@ -1,4 +1,3 @@
-
 package cl.duoc.consumiendoapi.ui
 
 import androidx.compose.foundation.BorderStroke
@@ -16,6 +15,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 
 @Composable
 fun DashboardScreen(
@@ -25,7 +26,9 @@ fun DashboardScreen(
 ) {
 
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
-
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.cargarClientes()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

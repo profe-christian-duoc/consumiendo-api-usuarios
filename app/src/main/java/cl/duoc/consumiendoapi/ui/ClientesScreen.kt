@@ -20,6 +20,7 @@ import cl.duoc.consumiendoapi.ui.theme.*
 @Composable
 fun ClientesScreen(
     onVolver: () -> Unit,
+    onEditarUsuario: (Int) -> Unit,
     viewModel: ClientesViewModel = viewModel()
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
@@ -107,7 +108,19 @@ fun ClientesScreen(
                             items = actual.clientes,
                             key = { it.id }
                         ) { cliente ->
-                            ClienteCard(cliente)
+
+                            Column {
+                                ClienteCard(cliente)
+
+                                OutlinedButton(
+                                    onClick = {
+                                        onEditarUsuario(cliente.id)
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Editar usuario")
+                                }
+                            }
                         }
                     }
                 }

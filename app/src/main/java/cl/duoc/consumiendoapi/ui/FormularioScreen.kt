@@ -2,11 +2,12 @@ package cl.duoc.consumiendoapi.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -15,10 +16,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun FormularioScreen(
+    clienteId: Int?,
     onVolver: () -> Unit,
     viewModel: ClienteFormViewModel = viewModel()
 ) {
     val estado by viewModel.estado.collectAsStateWithLifecycle()
+    val editando = clienteId != null
+
+    LaunchedEffect(clienteId) {
+        if (clienteId != null) {
+            viewModel.cargarCliente(clienteId)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -30,9 +39,18 @@ fun FormularioScreen(
         TextButton(onClick = onVolver) {
             Text("← Volver")
         }
+
+        Text(
+            text = if (editando) "Editar usuario" else "Nuevo usuario",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
         if (estado.guardado) {
             Text(
-                text = "¡Usuario creado correctamente!",
+                text = if (editando)
+                    "¡Usuario actualizado correctamente!"
+                else
+                    "¡Usuario creado correctamente!",
                 color = MaterialTheme.colorScheme.primary
             )
 
@@ -108,7 +126,9 @@ fun FormularioScreen(
             }
 
             Button(
-                onClick = { },
+                onClick = {
+                    viewModel.guardar(clienteId)
+                },
                 enabled = !estado.guardando,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -119,7 +139,10 @@ fun FormularioScreen(
                         strokeWidth = 2.dp
                     )
                 } else {
-                    Text("Guardar usuario")
+                    Text(
+                        if (editando) "Actualizar usuario"
+                        else "Guardar usuario"
+                    )
                 }
             }
         }
