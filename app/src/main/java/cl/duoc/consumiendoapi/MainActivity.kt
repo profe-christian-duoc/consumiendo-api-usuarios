@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import cl.duoc.consumiendoapi.ui.ClientesScreen
+import cl.duoc.consumiendoapi.navigation.AppNavigation
 import cl.duoc.consumiendoapi.ui.theme.ClientesAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ClientesAppTheme {
-                ClientesScreen()
+                AppNavigation()
             }
         }
     }

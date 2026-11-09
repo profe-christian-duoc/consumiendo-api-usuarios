@@ -19,6 +19,7 @@ import cl.duoc.consumiendoapi.ui.theme.*
 
 @Composable
 fun ClientesScreen(
+    onVolver: () -> Unit,
     viewModel: ClientesViewModel = viewModel()
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
@@ -29,7 +30,13 @@ fun ClientesScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
+        TextButton(
+            onClick = onVolver
+        ) {
+            Text("← Volver al inicio")
+        }
 
+        Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
