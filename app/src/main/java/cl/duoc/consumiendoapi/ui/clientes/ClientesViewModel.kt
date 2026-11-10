@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.clientes
+package cl.duoc.consumiendoapi.ui.clientes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

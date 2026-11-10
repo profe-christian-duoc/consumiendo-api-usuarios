@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.components
+package cl.duoc.consumiendoapi.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cl.duoc.consumiendoapi.domain.model.Cliente
 import cl.duoc.consumiendoapi.ui.theme.*
@@ -112,4 +113,10 @@ fun ClienteCard(cliente: Cliente) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun CardPreview(){
+    ClienteCard(Cliente(1,"Juan","Perez",20,"vip"))
 }

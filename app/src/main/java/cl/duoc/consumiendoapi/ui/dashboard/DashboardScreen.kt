@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.dashboard
+package cl.duoc.consumiendoapi.ui.dashboard
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.consumiendoapi.domain.usecase.CalcularEstadisticasUseCase
-import cl.duoc.consumiendoapi.presentation.clientes.ClientesUiState
-import cl.duoc.consumiendoapi.presentation.clientes.ClientesViewModel
-import cl.duoc.consumiendoapi.presentation.components.TarjetaEstadistica
+import cl.duoc.consumiendoapi.ui.clientes.ClientesUiState
+import cl.duoc.consumiendoapi.ui.clientes.ClientesViewModel
+import cl.duoc.consumiendoapi.ui.components.TarjetaEstadistica
 import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
 import androidx.lifecycle.Lifecycle

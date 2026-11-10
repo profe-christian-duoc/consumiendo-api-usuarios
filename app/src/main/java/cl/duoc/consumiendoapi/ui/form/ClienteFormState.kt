@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.form
+package cl.duoc.consumiendoapi.ui.form
 
 data class ClienteFormState(
     val nombre: String = "",

@@ -9,9 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import cl.duoc.consumiendoapi.presentation.clientes.ClientesScreen
-import cl.duoc.consumiendoapi.presentation.dashboard.DashboardScreen
-import cl.duoc.consumiendoapi.presentation.form.FormularioScreen
+import cl.duoc.consumiendoapi.ui.clientes.ClientesScreen
+import cl.duoc.consumiendoapi.ui.dashboard.DashboardScreen
+import cl.duoc.consumiendoapi.ui.form.FormularioScreen
 
 object Rutas {
     const val INICIO = "inicio"

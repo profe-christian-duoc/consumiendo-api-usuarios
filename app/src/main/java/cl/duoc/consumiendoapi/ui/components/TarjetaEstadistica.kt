@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.components
+package cl.duoc.consumiendoapi.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

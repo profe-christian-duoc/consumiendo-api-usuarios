@@ -1,4 +1,4 @@
-package cl.duoc.consumiendoapi.presentation.clientes
+package cl.duoc.consumiendoapi.ui.clientes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.duoc.consumiendoapi.presentation.components.ClienteCard
+import cl.duoc.consumiendoapi.ui.components.ClienteCard
 import cl.duoc.consumiendoapi.ui.theme.*
 
 @Composable
