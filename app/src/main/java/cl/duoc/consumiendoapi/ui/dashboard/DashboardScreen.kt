@@ -19,7 +19,6 @@ import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-
 @Composable
 fun DashboardScreen(
     onAgregarUsuario: () -> Unit,
@@ -27,7 +26,6 @@ fun DashboardScreen(
     viewModel: ClientesViewModel = viewModel(),
     clientesUseCases: ClientesUseCases = ClientesUseCases()
 ) {
-
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         viewModel.cargarClientes()

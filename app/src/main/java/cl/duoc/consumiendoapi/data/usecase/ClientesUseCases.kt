@@ -14,7 +14,17 @@ class ClientesUseCases(
 
     suspend fun crearCliente(cliente: ClienteRequest) = repository.crearCliente(cliente)
 
-    suspend fun actualizarCliente(id: Int, cliente: ClienteRequest) = repository.actualizarCliente(id, cliente)
+    suspend fun actualizarCliente(id: Int, cliente: ClienteRequest) =
+        repository.actualizarCliente(id, cliente)
+
+    suspend fun  eliminarCliente(id: Int){
+        repository.eliminarCliente(id)
+    }
+    /*
+    suspend operator fun invoke(id: Int) {
+        repository.eliminarCliente(id)
+    }
+     */
 
     fun calcularEstadisticas(clientes: List<Cliente>): EstadisticasClientes {
         val vip = clientes.count { it.tipo.equals("vip", ignoreCase = true) }

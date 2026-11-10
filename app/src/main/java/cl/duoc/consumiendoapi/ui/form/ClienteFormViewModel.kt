@@ -77,7 +77,7 @@ class ClienteFormViewModel(
                 throw e
             } catch (e: Exception) {
                 _estado.value = _estado.value.copy(
-                    errorGeneral = "No se pudo cargar el cliente."
+                    errorGeneral = e.message ?: "No se pudo cargar el cliente."
                 )
             } finally {
                 _estado.value = _estado.value.copy(

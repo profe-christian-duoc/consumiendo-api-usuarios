@@ -3,11 +3,7 @@ package cl.duoc.consumiendoapi.data.remote
 import cl.duoc.consumiendoapi.data.model.ClienteRequest
 import cl.duoc.consumiendoapi.domain.model.Cliente
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.PUT
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface ClientesApi {
 
@@ -28,5 +24,10 @@ interface ClientesApi {
     suspend fun actualizarCliente(
         @Path("id") id: Int,
         @Body cliente: ClienteRequest
+    ): Response<Void>
+
+    @DELETE("usuarios/{id}")
+    suspend fun eliminarCliente(
+        @Path("id") id: Int
     ): Response<Void>
 }

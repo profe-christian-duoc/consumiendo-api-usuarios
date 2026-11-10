@@ -15,6 +15,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cl.duoc.consumiendoapi.ui.components.ClienteCard
 import cl.duoc.consumiendoapi.ui.theme.*
+import androidx.compose.runtime.*
+import cl.duoc.consumiendoapi.domain.model.Cliente
+
 
 @Composable
 fun ClientesScreen(
@@ -23,7 +26,12 @@ fun ClientesScreen(
     viewModel: ClientesViewModel = viewModel()
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
+    val eliminandoId by viewModel.eliminandoId.collectAsStateWithLifecycle()
+    val mensajeOperacion by viewModel.mensajeOperacion.collectAsStateWithLifecycle()
 
+    var clienteAEliminar by remember {
+        mutableStateOf<Cliente?>(null)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,14 +54,14 @@ fun ClientesScreen(
                 text = "Clientes",
                 style = MaterialTheme.typography.headlineMedium
             )
-
+            /*
             if (estado is ClientesUiState.Exito) {
                 Surface(
                     color = FondoConexion,
                     shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
-                        text = "● Conectado",
+                        text = "Conectado",
                         color = VerdeConexion,
                         modifier = Modifier.padding(
                             horizontal = 12.dp,
@@ -62,10 +70,36 @@ fun ClientesScreen(
                     )
                 }
             }
+             */
         }
 
         Spacer(modifier = Modifier.height(20.dp))
+        if (mensajeOperacion != null) {
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = mensajeOperacion!!,
+                        modifier = Modifier.weight(1f)
+                    )
 
+                    TextButton(
+                        onClick = viewModel::limpiarMensaje
+                    ) {
+                        Text("Cerrar")
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+        }
         when (val actual = estado) {
 
             is ClientesUiState.Cargando -> {
@@ -108,22 +142,99 @@ fun ClientesScreen(
                             key = { it.id }
                         ) { cliente ->
 
-                            Column {
+
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
                                 ClienteCard(cliente)
 
-                                OutlinedButton(
-                                    onClick = {
-                                        onEditarUsuario(cliente.id)
-                                    },
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text("Editar usuario")
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            onEditarUsuario(cliente.id)
+                                        },
+                                        enabled = eliminandoId == null,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Editar")
+                                    }
+
+                                    OutlinedButton(
+                                        onClick = {
+                                            clienteAEliminar = cliente
+                                        },
+                                        enabled = eliminandoId == null,
+                                        colors = ButtonDefaults.outlinedButtonColors(
+                                            contentColor = MaterialTheme.colorScheme.error
+                                        ),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        if (eliminandoId == cliente.id) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(18.dp),
+                                                strokeWidth = 2.dp
+                                            )
+                                        } else {
+                                            Text("Eliminar")
+                                        }
+                                    }
                                 }
                             }
+
                         }
                     }
                 }
             }
+        }
+
+        clienteAEliminar?.let { cliente ->
+
+            AlertDialog(
+                onDismissRequest = {
+                    clienteAEliminar = null
+                },
+
+                title = {
+                    Text("¿Eliminar usuario?")
+                },
+
+                text = {
+                    Text(
+                        "¿Deseas eliminar a " +
+                                "${cliente.nombre} ${cliente.apellido}? " +
+                                "Esta acción no se puede deshacer."
+                    )
+                },
+
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            clienteAEliminar = null
+                            viewModel.eliminarCliente(cliente.id)
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor =
+                                MaterialTheme.colorScheme.error
+                        )
+                    ) {
+                        Text("Sí, eliminar")
+                    }
+                },
+
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            clienteAEliminar = null
+                        }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }
