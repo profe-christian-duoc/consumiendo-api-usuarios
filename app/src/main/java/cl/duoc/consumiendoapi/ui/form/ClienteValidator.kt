@@ -1,23 +1,25 @@
 package cl.duoc.consumiendoapi.ui.form
 
 object ClienteValidator {
-    fun validar(
-        nombre: String,
-        apellido: String,
-        edad: Int?,
-        tipo: String
-    ): String? {
-        val trimmedNombre = nombre.trim()
-        val trimmedApellido = apellido.trim()
 
+    fun validarNombre(nombre: String): String? {
+        return if (nombre.isBlank()) "Ingresa un nombre." else null
+    }
+
+    fun validarApellido(apellido: String): String? {
+        return if (apellido.isBlank()) "Ingresa un apellido." else null
+    }
+
+    fun validarEdad(edadStr: String): String? {
+        val edad = edadStr.toIntOrNull()
         return when {
-            trimmedNombre.isBlank() -> "Ingresa un nombre."
-            trimmedApellido.isBlank() -> "Ingresa un apellido."
-            edad == null || edad !in 1..120 ->
-                "La edad debe estar entre 1 y 120."
-            tipo !in listOf("regular", "vip") ->
-                "Selecciona un tipo válido."
+            edadStr.isBlank() -> "Ingresa una edad."
+            edad == null || edad !in 1..120 -> "La edad debe estar entre 1 y 120."
             else -> null
         }
+    }
+
+    fun validarTipo(tipo: String): String? {
+        return if (tipo !in listOf("regular", "vip")) "Selecciona un tipo válido." else null
     }
 }

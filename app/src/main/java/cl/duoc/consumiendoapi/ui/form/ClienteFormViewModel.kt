@@ -3,16 +3,14 @@ package cl.duoc.consumiendoapi.ui.form
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cl.duoc.consumiendoapi.data.model.ClienteRequest
-import cl.duoc.consumiendoapi.domain.usecase.GuardarClienteUseCase
-import cl.duoc.consumiendoapi.domain.usecase.ObtenerClienteUseCase
+import cl.duoc.consumiendoapi.data.usecase.ClientesUseCases
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ClienteFormViewModel(
-    private val obtenerClienteUseCase: ObtenerClienteUseCase = ObtenerClienteUseCase(),
-    private val guardarClienteUseCase: GuardarClienteUseCase = GuardarClienteUseCase()
+    private val clientesUseCases: ClientesUseCases = ClientesUseCases()
 ) : ViewModel() {
 
     private var clienteCargadoId: Int? = null
@@ -22,14 +20,16 @@ class ClienteFormViewModel(
     fun cambiarNombre(valor: String) {
         _estado.value = _estado.value.copy(
             nombre = valor,
-            error = null
+            nombreError = ClienteValidator.validarNombre(valor),
+            errorGeneral = null
         )
     }
 
     fun cambiarApellido(valor: String) {
         _estado.value = _estado.value.copy(
             apellido = valor,
-            error = null
+            apellidoError = ClienteValidator.validarApellido(valor),
+            errorGeneral = null
         )
     }
 
@@ -37,7 +37,8 @@ class ClienteFormViewModel(
         if (valor.all { it.isDigit() }) {
             _estado.value = _estado.value.copy(
                 edad = valor,
-                error = null
+                edadError = ClienteValidator.validarEdad(valor),
+                errorGeneral = null
             )
         }
     }
@@ -45,7 +46,7 @@ class ClienteFormViewModel(
     fun cambiarTipo(valor: String) {
         _estado.value = _estado.value.copy(
             tipo = valor,
-            error = null
+            errorGeneral = null
         )
     }
 
@@ -59,11 +60,11 @@ class ClienteFormViewModel(
         viewModelScope.launch {
             _estado.value = _estado.value.copy(
                 cargando = true,
-                error = null
+                errorGeneral = null
             )
 
             try {
-                val cliente = obtenerClienteUseCase(id)
+                val cliente = clientesUseCases.obtenerCliente(id)
 
                 _estado.value = ClienteFormState(
                     nombre = cliente.nombre,
@@ -76,7 +77,7 @@ class ClienteFormViewModel(
                 throw e
             } catch (e: Exception) {
                 _estado.value = _estado.value.copy(
-                    error = "No se pudo cargar el cliente."
+                    errorGeneral = "No se pudo cargar el cliente."
                 )
             } finally {
                 _estado.value = _estado.value.copy(
@@ -92,37 +93,40 @@ class ClienteFormViewModel(
         if (actual.guardando || actual.cargando ||
             actual.guardado) return
 
-        val edadInt = actual.edad.toIntOrNull()
-        val errorValidacion = ClienteValidator.validar(
-            nombre = actual.nombre,
-            apellido = actual.apellido,
-            edad = edadInt,
-            tipo = actual.tipo
-        )
+        val nombreErr = ClienteValidator.validarNombre(actual.nombre)
+        val apellidoErr = ClienteValidator.validarApellido(actual.apellido)
+        val edadErr = ClienteValidator.validarEdad(actual.edad)
+        val tipoErr = ClienteValidator.validarTipo(actual.tipo)
 
-        if (errorValidacion != null) {
-            _estado.value = actual.copy(error = errorValidacion)
+        if (nombreErr != null || apellidoErr != null || edadErr != null || tipoErr != null) {
+            _estado.value = actual.copy(
+                nombreError = nombreErr,
+                apellidoError = apellidoErr,
+                edadError = edadErr,
+                errorGeneral = tipoErr
+            )
             return
         }
 
+        val edadInt = actual.edad.toIntOrNull()!!
         val solicitud = ClienteRequest(
             nombre = actual.nombre.trim(),
             apellido = actual.apellido.trim(),
-            edad = edadInt!!,
+            edad = edadInt,
             tipo = actual.tipo
         )
 
         viewModelScope.launch {
             _estado.value = _estado.value.copy(
                 guardando = true,
-                error = null
+                errorGeneral = null
             )
 
             try {
                 if (id == null) {
-                    guardarClienteUseCase.crear(solicitud)
+                    clientesUseCases.crearCliente(solicitud)
                 } else {
-                    guardarClienteUseCase.actualizar(id, solicitud)
+                    clientesUseCases.actualizarCliente(id, solicitud)
                 }
 
                 _estado.value = _estado.value.copy(
@@ -132,7 +136,7 @@ class ClienteFormViewModel(
                 throw e
             } catch (e: Exception) {
                 _estado.value = _estado.value.copy(
-                    error = "No se pudo guardar el cliente: ${e.message}"
+                    errorGeneral = "No se pudo guardar el cliente: ${e.message}"
                 )
             } finally {
                 _estado.value = _estado.value.copy(

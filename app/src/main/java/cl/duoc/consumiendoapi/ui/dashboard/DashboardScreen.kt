@@ -11,10 +11,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import cl.duoc.consumiendoapi.domain.usecase.CalcularEstadisticasUseCase
 import cl.duoc.consumiendoapi.ui.clientes.ClientesUiState
 import cl.duoc.consumiendoapi.ui.clientes.ClientesViewModel
 import cl.duoc.consumiendoapi.ui.components.TarjetaEstadistica
+import cl.duoc.consumiendoapi.data.usecase.ClientesUseCases
 import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
 import androidx.lifecycle.Lifecycle
@@ -25,7 +25,7 @@ fun DashboardScreen(
     onAgregarUsuario: () -> Unit,
     onRevisarUsuarios: () -> Unit,
     viewModel: ClientesViewModel = viewModel(),
-    calcularEstadisticasUseCase: CalcularEstadisticasUseCase = CalcularEstadisticasUseCase()
+    clientesUseCases: ClientesUseCases = ClientesUseCases()
 ) {
 
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,7 +72,7 @@ fun DashboardScreen(
 
             is ClientesUiState.Exito -> {
 
-                val datos = calcularEstadisticasUseCase(actual.clientes)
+                val datos = clientesUseCases.calcularEstadisticas(actual.clientes)
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)

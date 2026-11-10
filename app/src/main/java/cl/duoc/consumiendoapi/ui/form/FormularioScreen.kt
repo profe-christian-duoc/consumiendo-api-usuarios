@@ -71,6 +71,12 @@ fun FormularioScreen(
                 onValueChange = viewModel::cambiarNombre,
                 label = { Text("Nombre") },
                 singleLine = true,
+                isError = estado.nombreError != null,
+                supportingText = {
+                    if (estado.nombreError != null) {
+                        Text(estado.nombreError!!)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -79,6 +85,12 @@ fun FormularioScreen(
                 onValueChange = viewModel::cambiarApellido,
                 label = { Text("Apellido") },
                 singleLine = true,
+                isError = estado.apellidoError != null,
+                supportingText = {
+                    if (estado.apellidoError != null) {
+                        Text(estado.apellidoError!!)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -90,6 +102,12 @@ fun FormularioScreen(
                     keyboardType = KeyboardType.Number
                 ),
                 singleLine = true,
+                isError = estado.edadError != null,
+                supportingText = {
+                    if (estado.edadError != null) {
+                        Text(estado.edadError!!)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -118,9 +136,9 @@ fun FormularioScreen(
                 )
             }
 
-            if (estado.error != null) {
+            if (estado.errorGeneral != null) {
                 Text(
-                    text = estado.error!!,
+                    text = estado.errorGeneral!!,
                     color = MaterialTheme.colorScheme.error
                 )
             }
