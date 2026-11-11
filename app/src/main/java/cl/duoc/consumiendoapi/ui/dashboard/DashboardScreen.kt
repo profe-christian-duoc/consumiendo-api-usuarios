@@ -19,12 +19,15 @@ import cl.duoc.consumiendoapi.ui.theme.*
 import java.util.Locale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import cl.duoc.consumiendoapi.domain.usecase.CalcularEstadisticasUseCase
+
 @Composable
 fun DashboardScreen(
     onAgregarUsuario: () -> Unit,
     onRevisarUsuarios: () -> Unit,
     viewModel: ClientesViewModel = viewModel(),
-    clientesUseCases: ClientesUseCases = ClientesUseCases()
+    clientesUseCases: ClientesUseCases = ClientesUseCases(),
+    calcularEstadisticas: CalcularEstadisticasUseCase = CalcularEstadisticasUseCase()
 ) {
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -70,7 +73,7 @@ fun DashboardScreen(
 
             is ClientesUiState.Exito -> {
 
-                val datos = clientesUseCases.calcularEstadisticas(actual.clientes)
+                val datos = calcularEstadisticas.calcularEstadisticas(actual.clientes)
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
